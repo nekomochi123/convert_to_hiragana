@@ -1,0 +1,5 @@
+
+enum ConvertType {
+  hiragana,
+  katakana
+}
