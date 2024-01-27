@@ -8,7 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 part 'hiragana_controller.freezed.dart';
 
 final hiraganaControllerProvider = StateNotifierProvider.autoDispose<HiraganaController, HiraganaState>(
-  (ref) => HiraganaController(const HiraganaState(), ref.read),
+      (ref) => HiraganaController(const HiraganaState(), ref.read),
 );
 
 @freezed
@@ -18,14 +18,14 @@ class HiraganaState with _$HiraganaState {
   }) = _HiraganaState;
 }
 
-class HiraganaController extends StateNotifier<HiraganaState> {
-  HiraganaController(super.state, this._read);
+class HiraganaController extends StateNotifier<HiraganaState> {HiraganaController(super.state, this._read);
 
   final Reader _read;
 
-  HiraganaRepository get _hiraganaRepository => _read(hiraganaRepositoryProvider);
+  HiraganaRepository get _hiraganaRepository =>
+      _read(hiraganaRepositoryProvider);
 
-  Future<void> convert({required String sentence}) async {
+  Future<void> convert({required String sentence, required ConvertType convertType}) async {
     if (!mounted || state.convertedText is AsyncLoading) {
       return;
     }
@@ -33,7 +33,6 @@ class HiraganaController extends StateNotifier<HiraganaState> {
     state = state.copyWith.call(convertedText: const AsyncValue.loading());
 
     try {
-      const convertType = ConvertType.hiragana;
 
       final result = await _hiraganaRepository.convertRequest(
         sentence: sentence,
