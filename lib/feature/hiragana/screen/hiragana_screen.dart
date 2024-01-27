@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hiragana/feature/hiragana/controller/hiragana_controller.dart';
+import 'package:hiragana/feature/hiragana/enum/convert_type.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HiraganaScreen extends HookConsumerWidget {
@@ -30,35 +31,49 @@ class HiraganaScreen extends HookConsumerWidget {
               children: [
                 // api通信の状態によって表示を変えるよ
                 convertedText.when(
-                  data: (text) => const SizedBox.shrink(),
+                  data: (text) => Text(text ?? ''),
                   error: (_, __) => const Text('エラーです'),
                   loading: () => const Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),
                 const Gap(24),
-                TextField(
-                  controller: TextEditingController(text: convertedText.maybeWhen(
-                    data: (text) => text,
-                    orElse: () => '',
-                  ),
-                ),
-                ),
+                TextField(controller: textFieldController),
                 const Gap(12),
-                SizedBox(
-                  width: 200,
-                  child: TextButton(
-                    onPressed: () async{
-                    final controller = ref.read(hiraganaControllerProvider.notifier);
-                    await controller.convert(sentence: textFieldController.text);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.pink,
-                      foregroundColor: Colors.white,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      child: TextButton(
+                        onPressed: () async{
+                          final controller = ref.read(hiraganaControllerProvider.notifier);
+                          await controller.convert(sentence: textFieldController.text, convertType: ConvertType.hiragana);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.pink,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('かな変換'),
+                      ),
                     ),
-                    child: const Text('変換'),
-                  ),
+                    SizedBox(
+                      width: 100,
+                      child: TextButton(
+                        onPressed: () async{
+                          final controller = ref.read(hiraganaControllerProvider.notifier);
+                          await controller.convert(sentence: textFieldController.text, convertType: ConvertType.katakana);
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.pink,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('カナ変換'),
+                      ),
+                    ),
+                  ],
                 ),
+
               ],
             ),
           ),
